@@ -27,10 +27,10 @@ def build_transform(training=True):
 
     return transforms.Compose(image_steps + augments + tensor_steps)
 
-def create_folder(crop, plate_char, index):
+def create_folder(crop, plate_char, index, plate_string):
     char_dir = os.path.join(script_dir, "characters", plate_char)
     os.makedirs(char_dir, exist_ok=True)
-    new_filename = f"{plate_char}_{index}.png"
+    new_filename = f"{plate_string}_{index}.png"
     new_path = os.path.join(char_dir, new_filename)
     cv2.imwrite(new_path, crop)
 
@@ -52,4 +52,4 @@ for plates_dir in plate_dirs:
             for i in range(len(crops)):
                 crop = crops[i]
                 plate_char = plate_string[i]
-                create_folder(crop, plate_char, i)
+                create_folder(crop, plate_char, i, plate_string)
