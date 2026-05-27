@@ -13,7 +13,7 @@ def segment_characters(image_path):
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         aspect_ratio = w / h
-        if h > 20 and 0.2 < aspect_ratio < 1.0:  # Filter out small contours that are unlikely to be characters
+        if h > 20 and 0.17 < aspect_ratio < 1.0:  # Filter out small contours that are unlikely to be characters
             boxes.append((x, y, w, h))
     boxes.sort(key=lambda box: box[0])
     char_images = []

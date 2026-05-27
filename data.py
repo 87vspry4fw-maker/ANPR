@@ -6,13 +6,6 @@ import segmentation
 segment = segmentation.segment_characters
 validate = segmentation.segmentation_is_valid
 
-def data_loader():
-    this_file = __file__
-    this_file_absolute = os.path.abspath(this_file)
-    script_dir = os.path.dirname(this_file_absolute)
-    data_dir = os.path.join(script_dir, 'data')
-    return data_dir
-
 def build_transform(training=True):
     if training:
         augments = [
@@ -34,6 +27,13 @@ def build_transform(training=True):
 
     return transforms.Compose(image_steps + augments + tensor_steps)
 
+def create_folder(crop, plate_char, index):
+    char_dir = os.path.join(script_dir, "characters", plate_char)
+    os.makedirs(char_dir, exist_ok=True)
+    new_filename = f"{plate_char}_{index}.png"
+    new_path = os.path.join(char_dir, new_filename)
+    cv2.imwrite(new_path, crop)
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 white_dir = os.path.join(script_dir, "UKLicencePlateDataset", "whiteplate_normal")
 yellow_dir = os.path.join(script_dir, "UKLicencePlateDataset", "yellowplate_normal")
@@ -46,7 +46,10 @@ for plates_dir in plate_dirs:
         plate_path = os.path.join(plates_dir, filename)
         plate_string = os.path.splitext(filename)[0]
         crops = segment(plate_path)
-        print(validate(crops, plate_string))
-        print(filename)
-        print(plate_string)
+        correct = validate(crops, plate_string)
 
+        if correct:
+            for i in range(len(crops)):
+                crop = crops[i]
+                plate_char = plate_string[i]
+                create_folder(crop, plate_char, i)
