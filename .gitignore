@@ -4,4 +4,4 @@ __pycache__/
 .DS_Store
 steps.txt
 .claude
-.vscode
+.vscode/
