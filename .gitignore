@@ -7,3 +7,6 @@ steps.txt
 .vscode/
 UKLicencePlateDataset/
 characters/
+RealPlates/
+real_characters/
+segment_real.py

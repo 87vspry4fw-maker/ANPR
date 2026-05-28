@@ -1,6 +1,9 @@
 import os
 import cv2
 import torchvision.transforms as transforms
+from pathlib import Path
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
 import segmentation
 
 segment = segmentation.segment_characters
@@ -62,3 +65,40 @@ def split_dataset():
                     crop = crops[i]
                     plate_char = plate_string[i]
                     create_folder(crop, plate_char, i, plate_string, script_dir)
+
+
+script_dir = Path(__file__).resolve().parent
+char_dir = script_dir / "characters"
+
+class_names = sorted([d.name for d in char_dir.iterdir() if d.is_dir()])
+class_to_idx = {name: idx for idx, name in enumerate(class_names)}
+idx_to_class = {i: name for name, i in class_to_idx.items()}
+
+class CharDataset(Dataset):
+    def __init__(self, root, class_to_idx, transform=None):
+        self.transform = transform
+        self.samples = []
+        for name, idx in class_to_idx.items():
+            class_dir = root / name
+            for img_path in sorted(class_dir.iterdir()):
+                if img_path.is_file():
+                    self.samples.append((img_path, idx))
+    
+    def __len__(self):
+        return len(self.samples)
+    
+    def __getitem__(self, i):
+        img_path, label = self.samples[i]
+        image = Image.open(img_path).convert("L")
+        if self.transform:
+            image = self.transform(image)
+        return image, label
+    
+train_tf = build_transform(training=True)
+test_tf = build_transform(training=False)
+
+train_ds = CharDataset(char_dir, class_to_idx, transform=train_tf)
+test_ds = CharDataset(char_dir, class_to_idx, transform=test_tf)
+
+train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
