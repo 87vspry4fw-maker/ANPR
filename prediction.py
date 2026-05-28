@@ -7,7 +7,8 @@ from PIL import Image
 
 from model import CharCNN
 from data import build_transform
-from data import segment   # no-band + relative-height segmentation
+from segmentation_v2 import segment_v2
+from plate_format import constrained_index, DIGIT_POSITIONS
 
 script_dir = Path(__file__).resolve().parent
 weights = script_dir / "char_cnn.pt"
@@ -25,14 +26,9 @@ model.eval()
 
 transform = build_transform(training=False)
 
-# UK plate format "LL DD LLL": positions 0,1,4,5,6 are letters; 2,3 are digits.
-DIGIT_POSITIONS = {2, 3}
-is_digit = torch.tensor([c.isdigit() for c in classes])
-is_letter = torch.tensor([c.isalpha() for c in classes])
-
 
 def predict_plate(image_path):
-    crops = segment(str(image_path), has_band=False)    # real photos: no GB band to cut
+    crops = segment_v2(str(image_path), has_band=False)    # real photos: no GB band to cut
     if not crops:
         print("No characters found. Is the image cropped to just the plate (no GB band)?")
         return ""
@@ -48,8 +44,7 @@ def predict_plate(image_path):
             raw_chars.append(classes[int(logits.argmax())])
 
             if use_format:
-                allowed = is_digit if i in DIGIT_POSITIONS else is_letter
-                idx = int(logits.masked_fill(~allowed, float("-inf")).argmax())
+                idx = constrained_index(logits.tolist(), classes, i)
             else:
                 idx = int(logits.argmax())
             final_chars.append(classes[idx])
@@ -75,5 +70,5 @@ def predict_plate(image_path):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        raise SystemExit("Usage: python predict_plate.py <path-to-plate-image>")
+        raise SystemExit("Usage: python predictions.py <path-to-plate-image>")
     predict_plate(sys.argv[1])
