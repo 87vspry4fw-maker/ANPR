@@ -11,3 +11,4 @@ RealPlates/
 real_characters/
 eval_real.py
 char_cnn.pt
+classes.json
