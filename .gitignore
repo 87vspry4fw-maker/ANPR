@@ -9,4 +9,5 @@ UKLicencePlateDataset/
 characters/
 RealPlates/
 real_characters/
-segment_real.py
+eval_real.py
+char_cnn.pt

@@ -57,7 +57,7 @@ def split_dataset():
             plate_path = os.path.join(plates_dir, filename)
             plate_string = os.path.splitext(filename)[0]
             print("PATH:", plate_path)
-            crops = segment(plate_path)
+            crops = segment(plate_path, has_band=True)
             correct = validate(crops, plate_string)
 
             if correct:
@@ -93,12 +93,3 @@ class CharDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         return image, label
-    
-train_tf = build_transform(training=True)
-test_tf = build_transform(training=False)
-
-train_ds = CharDataset(char_dir, class_to_idx, transform=train_tf)
-test_ds = CharDataset(char_dir, class_to_idx, transform=test_tf)
-
-train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
