@@ -37,14 +37,14 @@ def BuildTransform(Training):
 
     return transforms.Compose(ImageSteps + Augments + TensorSteps)
 
-def create_folder(Crop, PlateChar, Index, PlateString, ScriptDir, DestFolder="Characters"):
+def CreateFolder(Crop, PlateChar, Index, PlateString, ScriptDir, DestFolder="Characters"):
     CharDir = os.path.join(ScriptDir, DestFolder, PlateChar)
     os.makedirs(CharDir, exist_ok=True)
     NewFilename = f"{PlateString}_{Index}.png"
     NewPath = os.path.join(CharDir, NewFilename)
     cv2.imwrite(NewPath, Crop)
 
-def split_dataset():
+def SplitDataset():
     ScriptDir = os.path.dirname(os.path.abspath(__file__))
     WhiteDir = os.path.join(ScriptDir, "UKLicencePlateDataset", "whiteplate_normal")
     YellowDir = os.path.join(ScriptDir, "UKLicencePlateDataset", "yellowplate_normal")
@@ -69,7 +69,7 @@ def split_dataset():
                 for i in range(len(Crops)):
                     Crop = Crops[i]
                     PlateChar = PlateString[i]
-                    create_folder(Crop, PlateChar, i, PlateString, ScriptDir)
+                    CreateFolder(Crop, PlateChar, i, PlateString, ScriptDir)
                     TotalCrops += 1
             else:
                 Discarded += 1
@@ -94,7 +94,7 @@ def BuildRealCharacters():
         if Validate(Crops, PlateString):                        # same count-check as synthetic
             Passed += 1
             for i, Crop in enumerate(Crops):
-                create_folder(Crop, PlateString[i], i, PlateString, ScriptDir,
+                CreateFolder(Crop, PlateString[i], i, PlateString, ScriptDir,
                               DestFolder="RealCharacters")
                 TotalCrops += 1
         else:
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     import sys
     Mode = sys.argv[1] if len(sys.argv) > 1 else ""
     if Mode == "synthetic":
-        split_dataset()
+        SplitDataset()
     elif Mode == "real":
         BuildRealCharacters()
     else:
