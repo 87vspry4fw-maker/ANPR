@@ -113,5 +113,5 @@ if __name__ == "__main__":
         Match = len(Crops) == len(Plate)
         ok += Match
         print(f"[{'OK' if Match else 'XX'}] {Plate}: {len(Crops)}/{len(Plate)} chars")
-    print(f"\n{ok}/17 plates at the correct character count")
+    print(f"\n{ok}/{len(list(InputDir.glob('*.png')))} plates at the correct character count")
     print(f"Annotated images (binary + boxes) in {OutputDir.name}/")
