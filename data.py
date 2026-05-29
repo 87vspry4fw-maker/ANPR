@@ -1,13 +1,14 @@
 import os
 import cv2
+import random
 import torchvision.transforms as transforms
 from pathlib import Path
 from torch.utils.data import Dataset
 from PIL import Image
 import segmentation
 
-Segment = segmentation.segment_characters
-Validate = segmentation.segmentation_is_valid
+Segment = segmentation.SegmentCharacters
+Validate = segmentation.SegmentationIsValid
 
 def BuildTransform(Training):
     if Training:
@@ -51,11 +52,14 @@ def split_dataset():
     PlateDirs = [WhiteDir, YellowDir]
 
     Passed = Discarded = TotalCrops = 0
+    PerFolderLimit = 2500
 
     for PlatesDir in PlateDirs:
-        for Filename in os.listdir(PlatesDir):
-            if not Filename.lower().endswith(".png"):
-                continue
+        Files = [f for f in os.listdir(PlatesDir) if f.lower().endswith(".png")]
+        if PerFolderLimit:
+            random.seed(0)                                   # reproducible subset
+            Files = random.sample(Files, min(PerFolderLimit, len(Files)))
+        for Filename in Files:
             PlatePath = os.path.join(PlatesDir, Filename)
             PlateString = os.path.splitext(Filename)[0]
             Crops = Segment(PlatePath, HasBand=True)
