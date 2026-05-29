@@ -3,8 +3,6 @@ import cv2
 import random
 import torchvision.transforms as transforms
 from pathlib import Path
-from torch.utils.data import Dataset
-from PIL import Image
 import segmentation
 from segmentationV2 import SegmentV2
 
@@ -97,7 +95,7 @@ def BuildRealCharacters():
             Passed += 1
             for i, Crop in enumerate(Crops):
                 create_folder(Crop, PlateString[i], i, PlateString, ScriptDir,
-                              dest_folder="RealCharacters")
+                              DestFolder="RealCharacters")
                 TotalCrops += 1
         else:
             Discarded += 1
@@ -106,11 +104,7 @@ def BuildRealCharacters():
     print(f"Real plates discarded (count mismatch): {Discarded}")
     print(f"Real character crops written: {TotalCrops}")
 
-ScriptDir = Path(__file__).resolve().parent
-CharDir = ScriptDir / "Characters"
-
-ClassNames = sorted([d.name for d in CharDir.iterdir() if d.is_dir()])
-    
+  
 if __name__ == "__main__":
     import sys
     Mode = sys.argv[1] if len(sys.argv) > 1 else ""
