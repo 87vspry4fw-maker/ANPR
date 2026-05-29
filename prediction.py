@@ -7,8 +7,8 @@ from PIL import Image
 
 from model import CharCNN
 from data import BuildTransform
-from segmentation_v2 import SegmentV2
-from plate_format import ConstrainedIndex, DigitPositions
+from segmentationV2 import SegmentV2
+from plateFormat import ConstrainedIndex, DigitPositions
 
 ScriptDir = Path(__file__).resolve().parent
 Weights = ScriptDir / "CharCNNWeights.pt"
