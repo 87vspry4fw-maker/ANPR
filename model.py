@@ -10,9 +10,9 @@ class CharCNN(nn.Module):
         self.Pool = nn.MaxPool2d(2, 2)
         self.FC1 = nn.Linear(64 * 16 * 16, 128)
         self.FC2 = nn.Linear(128, NumClasses)
+        self.dropout = nn.Dropout(0.5)
     
     def forward(self, x):
-        self.dropout = nn.Dropout(0.5)
         x = self.Pool(F.relu(self.Convolutional1(x)))
         x = self.Pool(F.relu(self.Convolutional2(x)))
         x = torch.flatten(x, 1)

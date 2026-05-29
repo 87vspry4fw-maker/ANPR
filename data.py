@@ -50,21 +50,32 @@ def split_dataset():
     YellowDir = os.path.join(ScriptDir, "UKLicencePlateDataset", "yellowplate_normal")
     PlateDirs = [WhiteDir, YellowDir]
 
+    Passed = Discarded = TotalCrops = 0
+
     for PlatesDir in PlateDirs:
         for Filename in os.listdir(PlatesDir):
             if not Filename.lower().endswith(".png"):
                 continue
             PlatePath = os.path.join(PlatesDir, Filename)
             PlateString = os.path.splitext(Filename)[0]
-            print("PATH:", PlatePath)
             Crops = Segment(PlatePath, HasBand=True)
             Correct = Validate(Crops, PlateString)
 
             if Correct:
+                Passed += 1
                 for i in range(len(Crops)):
                     Crop = Crops[i]
                     PlateChar = PlateString[i]
                     create_folder(Crop, PlateChar, i, PlateString, ScriptDir)
+                    TotalCrops += 1
+            else:
+                Discarded += 1
+
+    Labels = sorted(d.name for d in (Path(ScriptDir) / "Characters").iterdir() if d.is_dir())
+    print(f"\nPlates pass count-check: {Passed}")
+    print(f"Plates discarded: {Discarded}")
+    print(f"Total character Images: {TotalCrops}")
+    print(f"Labels ({len(Labels)}): {Labels}")
 
 
 ScriptDir = Path(__file__).resolve().parent
