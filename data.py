@@ -6,6 +6,7 @@ from pathlib import Path
 from torch.utils.data import Dataset
 from PIL import Image
 import segmentation
+from segmentationV2 import SegmentV2
 
 Segment = segmentation.SegmentCharacters
 Validate = segmentation.SegmentationIsValid
@@ -38,12 +39,12 @@ def BuildTransform(Training):
 
     return transforms.Compose(ImageSteps + Augments + TensorSteps)
 
-def create_folder(crop, plate_char, index, plate_string, script_dir):
-    CharDir = os.path.join(script_dir, "Characters", plate_char)
+def create_folder(Crop, PlateChar, Index, PlateString, ScriptDir, DestFolder="Characters"):
+    CharDir = os.path.join(ScriptDir, DestFolder, PlateChar)
     os.makedirs(CharDir, exist_ok=True)
-    NewFilename = f"{plate_string}_{index}.png"
+    NewFilename = f"{PlateString}_{Index}.png"
     NewPath = os.path.join(CharDir, NewFilename)
-    cv2.imwrite(NewPath, crop)
+    cv2.imwrite(NewPath, Crop)
 
 def split_dataset():
     ScriptDir = os.path.dirname(os.path.abspath(__file__))
@@ -81,6 +82,29 @@ def split_dataset():
     print(f"Total character Images: {TotalCrops}")
     print(f"Labels ({len(Labels)}): {Labels}")
 
+def BuildRealCharacters():
+    ScriptDir = os.path.dirname(os.path.abspath(__file__))
+    RealPlatesDir = os.path.join(ScriptDir, "RealPlates")
+
+    Passed = Discarded = TotalCrops = 0
+    for Filename in os.listdir(RealPlatesDir):
+        if not Filename.lower().endswith(".png"):
+            continue
+        PlatePath = os.path.join(RealPlatesDir, Filename)
+        PlateString = os.path.splitext(Filename)[0].upper()     # "GU73CFA"
+        Crops = SegmentV2(PlatePath, HasBand=False)              # real-photo segmenter; band already trimmed
+        if Validate(Crops, PlateString):                        # same count-check as synthetic
+            Passed += 1
+            for i, Crop in enumerate(Crops):
+                create_folder(Crop, PlateString[i], i, PlateString, ScriptDir,
+                              dest_folder="RealCharacters")
+                TotalCrops += 1
+        else:
+            Discarded += 1
+
+    print(f"\nReal plates passed count-check: {Passed}")
+    print(f"Real plates discarded (count mismatch): {Discarded}")
+    print(f"Real character crops written: {TotalCrops}")
 
 ScriptDir = Path(__file__).resolve().parent
 CharDir = ScriptDir / "Characters"
@@ -108,3 +132,13 @@ class CharDataset(Dataset):
         if self.Transform:
             image = self.Transform(image)
         return image, Label
+    
+if __name__ == "__main__":
+    import sys
+    Mode = sys.argv[1] if len(sys.argv) > 1 else ""
+    if Mode == "synthetic":
+        split_dataset()
+    elif Mode == "real":
+        BuildRealCharacters()
+    else:
+        raise SystemExit("Usage: python data.py [synthetic|real]")
