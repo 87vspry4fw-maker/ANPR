@@ -6,69 +6,69 @@ import torch
 from PIL import Image
 
 from model import CharCNN
-from data import build_transform
-from segmentation_v2 import segment_v2
-from plate_format import constrained_index, DIGIT_POSITIONS
+from data import BuildTransform
+from segmentation_v2 import SegmentV2
+from plate_format import ConstrainedIndex, DigitPositions
 
-script_dir = Path(__file__).resolve().parent
-weights = script_dir / "char_cnn.pt"
-classes = script_dir / "classes.json"
+ScriptDir = Path(__file__).resolve().parent
+Weights = ScriptDir / "CharCNNWeights.pt"
+Classes = ScriptDir / "CharClasses.json"
 
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+Device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
-if not weights.exists() or not classes.exists():
-    raise SystemExit("Missing char_cnn.pt / classes.json. Train and save the model first.")
+if not Weights.exists() or not Classes.exists():
+    raise SystemExit("Missing CharCNNWeights.pt / CharClasses.json. Train and save the model first.")
 
-classes = json.load(open(classes))
-model = CharCNN(num_classes=len(classes)).to(device)
-model.load_state_dict(torch.load(weights, map_location=device))
-model.eval()
+Classes = json.load(open(Classes))
+Model = CharCNN(NumClasses=len(Classes)).to(Device)
+Model.load_state_dict(torch.load(Weights, map_location=Device))
+Model.eval()
 
-transform = build_transform(training=False)
+Transform = BuildTransform(Training=False)
 
 
-def predict_plate(image_path):
-    crops = segment_v2(str(image_path), has_band=False)    # real photos: no GB band to cut
-    if not crops:
+def PredictPlate(ImagePath):
+    Crops = SegmentV2(str(ImagePath), HasBand=False)    # real photos: no GB band to cut
+    if not Crops:
         print("No characters found. Is the image cropped to just the plate (no GB band)?")
         return ""
 
-    use_format = len(crops) == 7   # the LL DD LLL rule only applies to standard 7-char plates
-    raw_chars, final_chars, confs = [], [], []
+    UseFormat = len(Crops) == 7   # the LL DD LLL rule only applies to standard 7-char plates
+    RawChars, FinalChars, Confs = [], [], []
     with torch.no_grad():
-        for i, crop in enumerate(crops):
+        for i, Crop in enumerate(Crops):
             # .convert("RGB") matches how ImageFolder loaded crops during training
-            x = transform(Image.fromarray(crop).convert("RGB")).unsqueeze(0).to(device)  # [1,1,64,64]
-            logits = model(x)[0].cpu()                  # [num_classes]
-            probs = torch.softmax(logits, dim=0)
-            raw_chars.append(classes[int(logits.argmax())])
+            x = Transform(Image.fromarray(Crop).convert("RGB")).unsqueeze(0).to(Device)  # [1,1,64,64]
+            Logits = Model(x)[0].cpu()                  # [num_classes]
+            Probabilities = torch.softmax(Logits, dim=0)
+            RawChars.append(Classes[int(Logits.argmax())])
 
-            if use_format:
-                idx = constrained_index(logits.tolist(), classes, i)
+            if UseFormat:
+                Index = ConstrainedIndex(Logits.tolist(), Classes, i)
             else:
-                idx = int(logits.argmax())
-            final_chars.append(classes[idx])
-            confs.append(float(probs[idx]))
+                Index = int(Logits.argmax())
+            FinalChars.append(Classes[Index])
+            Confs.append(float(Probabilities[Index]))
 
-    raw_plate = "".join(raw_chars)
-    final_plate = "".join(final_chars)
+    RawPlates = "".join(RawChars)
+    FinalPlates = "".join(FinalChars)
 
-    print(f"Raw prediction:   {raw_plate}")
-    if use_format:
-        print(f"Format-corrected: {final_plate}   (UK LL DD LLL)")
-        for i, (r, f) in enumerate(zip(raw_chars, final_chars)):
+    print(f"Raw prediction:   {RawPlates}")
+    if UseFormat:
+        print(f"Format-corrected: {FinalPlates}   (UK LL DD LLL)")
+        for i, (r, f) in enumerate(zip(RawChars, FinalChars)):
             if r != f:
-                slot = "digit" if i in DIGIT_POSITIONS else "letter"
-                print(f"  pos {i}: {r} -> {f}  (must be a {slot})")
+                Slot = "digit" if i in DigitPositions else "letter"
+                print(f"  pos {i}: {r} -> {f}  (must be a {Slot})")
     else:
-        print(f"(segmented {len(crops)} characters, not 7 - format rule skipped)")
+        print(f"(segmented {len(Crops)} characters, not 7 - format rule skipped)")
     print("Per-character confidence:")
-    for c, p in zip(final_chars, confs):
+    for c, p in zip(FinalChars, Confs):
         print(f"  {c}  {p:.2f}")
-    return final_plate
+    return FinalPlates
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         raise SystemExit("Usage: python predictions.py <path-to-plate-image>")
-    predict_plate(sys.argv[1])
+    PredictPlate(sys.argv[1])

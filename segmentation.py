@@ -1,10 +1,10 @@
 import cv2
 
-def segment_characters(image_path, has_band=True):
+def segment_characters(image_path, HasBand=True):
     plate = cv2.imread(image_path)
     grey = cv2.cvtColor(plate, cv2.COLOR_BGR2GRAY)
     width = grey.shape[1]
-    if has_band:
+    if HasBand:
         band_fraction = 0.16
         cutoff = int(width * band_fraction)
         grey = grey[:, cutoff:]

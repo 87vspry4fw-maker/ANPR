@@ -6,9 +6,8 @@ steps.txt
 .claude
 .vscode/
 UKLicencePlateDataset/
-characters/
+Characters/
 RealPlates/
-real_characters/
-eval_real.py
-char_cnn.pt
-classes.json
+RealCharacters/
+CharCNNWeights.pt
+CharClasses.json

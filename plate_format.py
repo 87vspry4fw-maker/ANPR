@@ -7,14 +7,14 @@ which lets us correct cross-category misreads (e.g. a digit-slot "O" must really
 a "0", a letter-slot "0" must really be an "O").
 """
 
-DIGIT_POSITIONS = {2, 3}   # 0-indexed positions that must be digits in "LL DD LLL"
+DigitPositions = {2, 3}   # 0-indexed positions that must be digits in "LL DD LLL"
 
 
-def position_wants_digit(position):
-    return position in DIGIT_POSITIONS
+def PositionWantsDigit(Position):
+    return Position in DigitPositions
 
 
-def constrained_index(scores, classes, position):
+def ConstrainedIndex(Scores, Classes, Position):
     """Pick the best class index that is *allowed* at this plate position.
 
     scores:   per-class scores (e.g. model logits), one float per class.
@@ -25,12 +25,12 @@ def constrained_index(scores, classes, position):
     matches what the position requires. Falls back to the plain best score if no
     class qualifies.
     """
-    want_digit = position_wants_digit(position)
-    best_idx, best_score = None, float("-inf")
-    for i, (name, score) in enumerate(zip(classes, scores)):
-        allowed = name.isdigit() if want_digit else name.isalpha()
-        if allowed and score > best_score:
-            best_idx, best_score = i, score
-    if best_idx is None:
-        best_idx = max(range(len(scores)), key=lambda i: scores[i])
-    return best_idx
+    WantDigit = PositionWantsDigit(Position)
+    BestIndex, BestScore = None, float("-inf")
+    for i, (Name, Score) in enumerate(zip(Classes, Scores)):
+        Allowed = Name.isdigit() if WantDigit else Name.isalpha()
+        if Allowed and Score > BestScore:
+            BestIndex, BestScore = i, Score
+    if BestIndex is None:
+        BestIndex = max(range(len(Scores)), key=lambda i: Scores[i])
+    return BestIndex
