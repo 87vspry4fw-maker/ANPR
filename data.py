@@ -110,28 +110,6 @@ ScriptDir = Path(__file__).resolve().parent
 CharDir = ScriptDir / "Characters"
 
 ClassNames = sorted([d.name for d in CharDir.iterdir() if d.is_dir()])
-ClassToIndex = {name: idx for idx, name in enumerate(ClassNames)}
-IndexToClass = {i: name for name, i in ClassToIndex.items()}
-
-class CharDataset(Dataset):
-    def __init__(self, Root, ClassToIndex, Transform=None):
-        self.Transform = Transform
-        self.Samples = []
-        for Name, Index in ClassToIndex.items():
-            ClassDir = Root / Name
-            for ImagePath in sorted(ClassDir.iterdir()):
-                if ImagePath.is_file():
-                    self.Samples.append((ImagePath, Index))
-    
-    def __len__(self):
-        return len(self.Samples)
-    
-    def __getitem__(self, i):
-        ImagePath, Label = self.Samples[i]
-        image = Image.open(ImagePath).convert("L")
-        if self.Transform:
-            image = self.Transform(image)
-        return image, Label
     
 if __name__ == "__main__":
     import sys
