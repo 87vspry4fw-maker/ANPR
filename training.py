@@ -29,6 +29,7 @@ LossFN = torch.nn.CrossEntropyLoss()
 
 for Epoch in range(50):
     Model.train()
+    RunningLoss = 0.0
     for x, y in TrainLoader:
         x, y = x.to(Device), y.to(Device)
         Logits = Model(x)
@@ -36,6 +37,8 @@ for Epoch in range(50):
         Optim.zero_grad()
         Loss.backward()
         Optim.step()
+        RunningLoss += Loss.item() * y.size(0)
+    TrainLoss = RunningLoss / len(TrainDataSet)
     
     Model.eval()
     Correct = Total = 0
@@ -45,7 +48,7 @@ for Epoch in range(50):
             Prediction = Model(x).argmax(dim=1)
             Correct += (Prediction == y).sum().item()
             Total += y.size(0)
-    print(f"Epoch {Epoch+1}: Val Accuracy = {Correct/Total:.3f}")
+    print(f"Epoch {Epoch+1}: Train Loss = {TrainLoss:.4f}, Val Accuracy = {Correct/Total:.3f}")
 
 
 TestDataSet = ImageFolder("RealCharacters", transform=BuildTransform(Training=False))
@@ -55,15 +58,34 @@ TestDataSet.targets = [label for _, label in TestDataSet.samples]
 
 TestLoader = DataLoader(TestDataSet, batch_size=64, shuffle=False, num_workers=0)
 
+
+from collections import defaultdict
+
 Model.eval()
 Correct = Total = 0
+PerClassTotal = defaultdict(int)
+PerClassCorrect = defaultdict(int)
+IdxToClass = {v: k for k, v in TrainFull.class_to_idx.items()}
 with torch.no_grad():
     for x, y in TestLoader:
         x, y = x.to(Device), y.to(Device)
         Prediction = Model(x).argmax(dim=1)
         Correct += (Prediction == y).sum().item()
         Total += y.size(0)
-print(f"\nReal-plate test accuracy = {Correct/Total:.3f}  ({Correct}/{Total})")
+        for true, pred in zip(y.tolist(), Prediction.tolist()):
+            PerClassTotal[true] += 1
+            if true == pred:
+                PerClassCorrect[true] += 1
+print(f"\nReal-plate test accuracy overall = {Correct/Total:.3f}  ({Correct}/{Total})")
+Wrong = [(IdxToClass[c], PerClassCorrect[c], PerClassTotal[c])
+         for c in sorted(PerClassTotal) if PerClassCorrect[c] < PerClassTotal[c]]
+if Wrong:
+    print("Characters it got wrong:")
+    for Char, Correct, Total in Wrong:
+        print(f"  {Char}: {Correct}/{Total}")
+else:
+    print("All characters were classified correctly!")
+
 
 torch.save(Model.state_dict(), "CharCNNWeights.pt")
 import json; json.dump(TrainFull.classes, open("CharClasses.json", "w"))
