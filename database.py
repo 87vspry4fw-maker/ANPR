@@ -49,19 +49,19 @@ def is_banned(plate):
     conn.close()
     return bool(row and row["is_banned"])
 
-def ban(plate, reason):
+def ban(plate, reason, student_name=None, student_id=None):
     plate = Normalise(plate)
     now = Now()
     conn = GetConnection()
     with conn:
         conn.execute("""
-            INSERT INTO vehicles (plate, is_banned, reason, updated_at)
-            VALUES (?, 1, ?, ?)
+            INSERT INTO vehicles (plate, is_banned, student_name, student_id, reason, updated_at)
+            VALUES (?, 1, ?, ?, ?, ?)
             ON CONFLICT(plate) DO UPDATE SET
                 is_banned = 1,
                 reason = ?,
                 updated_at = ?
-        """, (plate, reason, now, reason, now))
+        """, (plate, student_name, student_id, reason, now, reason, now))
         conn.execute("""
             INSERT INTO ban_events (plate, action, reason, timestamp)
             VALUES (?, 'ban', ?, ?)
@@ -101,9 +101,11 @@ def get_history(plate):
 if __name__ == "__main__":
     initDB()
     plate = "AB12 CDE"
+    student_name = "John Doe"
+    student_id = 123456
     print("Initial state:", get_details(plate))
 
-    ban(plate, reason="No permit")
+    ban(plate, reason="No permit", student_name=student_name, student_id=student_id)
     print("After ban:  ", get_details(plate))
     print("Is banned?  ", is_banned(plate))
 
@@ -111,10 +113,9 @@ if __name__ == "__main__":
     print("After unban:  ", get_details(plate))
     print("Is banned?  ", is_banned(plate))
 
-    ban(plate, reason="Repeat offender")
+    ban(plate, reason="Repeat offender", student_name=student_name, student_id=student_id)
     print("After second ban:  ", get_details(plate))
 
     print("History:")
     for event in get_history(plate):
         print("  ", event)
-
