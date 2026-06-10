@@ -2,6 +2,8 @@ import cv2
 
 def SegmentCharacters(ImagePath, HasBand=True):
     Plate = cv2.imread(ImagePath)
+    if Plate is None:
+        raise FileNotFoundError(f"Could not read image: {ImagePath}")
     Grey = cv2.cvtColor(Plate, cv2.COLOR_BGR2GRAY)
     Width = Grey.shape[1]
     if HasBand:

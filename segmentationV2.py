@@ -18,6 +18,8 @@ MinAR, MaxAR = 0.17, 1.0
 
 def Preprocess(ImagePath, HasBand):
     Grey = cv2.imread(str(ImagePath), cv2.IMREAD_GRAYSCALE)
+    if Grey is None:
+        raise FileNotFoundError(f"Could not read image: {ImagePath}")
     if HasBand:
         Cut = int(Grey.shape[1] * BandFraction)
         Grey = Grey[:, Cut:]
@@ -68,8 +70,10 @@ def MergeAndSplit(Boxes):
     for x, y, w, h in Merged:
         n = round(w / MedianWidth)
         if n >= 2 and w > 1.6 * MedianWidth:
-            Piece = w // n
-            Out.extend((x + k * Piece, y, Piece, h) for k in range(n))
+            for k in range(n):
+                x0 = x + (k * w) // n
+                x1 = x + ((k + 1) * w) // n
+                Out.append((x0, y, x1 - x0, h))
         else:
             Out.append((x, y, w, h))
     return Out
