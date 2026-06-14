@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime 
 DB = "ANPR.db"
 
 #Helpers
@@ -97,25 +97,12 @@ def get_history(plate):
     conn.close()
     return [dict(r) for r in rows]
 
-#Example usage
 if __name__ == "__main__":
     initDB()
-    plate = "AB12 CDE"
-    student_name = "John Doe"
-    student_id = 123456
-    print("Initial state:", get_details(plate))
-
-    ban(plate, reason="No permit", student_name=student_name, student_id=student_id)
-    print("After ban:  ", get_details(plate))
-    print("Is banned?  ", is_banned(plate))
-
-    unban(plate)
-    print("After unban:  ", get_details(plate))
-    print("Is banned?  ", is_banned(plate))
-
-    ban(plate, reason="Repeat offender", student_name=student_name, student_id=student_id)
-    print("After second ban:  ", get_details(plate))
-
-    print("History:")
-    for event in get_history(plate):
-        print("  ", event)
+    # Example usage
+    ban("ABC 123", "Violation of parking rules", "John Doe", 12345)
+    print(is_banned("ABC 123"))  # Should return True
+    print(get_details("ABC 123"))
+    unban("ABC 123")
+    print(is_banned("ABC 123"))  # Should return False
+    print(get_history("ABC 123"))
