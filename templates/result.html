@@ -5,13 +5,13 @@
 
   {% if is_banned %}
     <p class="banned">This vehicle is BANNED.</p>
-    <a href="{{ url_for('details', plate=plate) }}">View details</a>
+    <a class="btn" href="{{ url_for('details', plate=plate) }}">View details</a>
     <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
       <input type="hidden" name="plate" value="{{ plate }}">
-      <button type="submit">Unban</button>
+      <button class="btn-danger" type="submit">Unban</button>
     </form>
   {% else %}
     <p class="ok">This vehicle is not banned.</p>
-    <a href="{{ url_for('ban', plate=plate) }}">Ban this vehicle</a>
+    <a class="btn" href="{{ url_for('ban', plate=plate) }}">Ban this vehicle</a>
   {% endif %}
 {% endblock %}
