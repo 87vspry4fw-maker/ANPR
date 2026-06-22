@@ -147,4 +147,4 @@ def history():
     return render_template("history.html", events=db.recent_events(limit=50))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
