@@ -75,10 +75,10 @@ def ban(plate):
     
     plate = _normalise(plate)
     reason = request.form.get("reason", "").strip()
-    student_name = request.form.get("student_name", "").strip() or None
-    student_id = request.form.get("student_id", "").strip() or None
-    if not reason:
-        flash("A reason is required to ban a vehicle.")
+    student_name = request.form.get("student_name", "").strip()
+    student_id = request.form.get("student_id", "").strip()
+    if not reason or not student_name or not student_id:
+        flash("All fields are required to ban a vehicle.")
         return redirect(url_for("ban", plate=plate))
     
     db.ban(plate, reason, student_name, student_id)

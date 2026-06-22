@@ -2,7 +2,7 @@
 {% block content %}
   <h1>Detected plate: {{ plate }}</h1>
 
-  {% if banned %}
+  {% if is_banned %}
     <p class="banned">This vehicle is BANNED.</p>
     <a href="{{ url_for('details', plate=plate) }}">View details</a>
     <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
