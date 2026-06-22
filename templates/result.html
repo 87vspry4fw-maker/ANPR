@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Detected plate: {{ plate }}</h1>
+  <h1>Detected plate: <span class="plate">{{ plate }}</span></h1>
   <p class="hint">If this plate is incorrect, please try again with a retake.</p>
 
   {% if is_banned %}

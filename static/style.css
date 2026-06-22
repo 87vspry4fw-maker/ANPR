@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Charles Wright";
+  src: url("fonts/CharlesWright-Bold.otf") format("opentype");
+  font-weight: bold;
+}
+
 :root {
   --bg: #f4f6fb;
   --card: #ffffff;
@@ -80,12 +86,10 @@ input {
 }
 form p { margin: .25rem 0; }
 
-/* The editable number-plate box */
-.plate-input {
-  font-family: monospace;
-  font-size: 1.4rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+/* The number-plate box */
+.plate {
+  font-family: "Charles Wright", monospace;   /* monospace = fallback if the font fails to load */
+  letter-spacing: 3px;
 }
 
 /* Status banner (banned / not banned) */
