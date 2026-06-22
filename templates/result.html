@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Detected plate: {{ plate }}</h1>
+  <body>If this plate is incorrect, please try again with a retake.</body>
 
   {% if is_banned %}
     <p class="banned">This vehicle is BANNED.</p>
