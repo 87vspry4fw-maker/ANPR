@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Ban a vehicle</h1>
+  <form method="post" action="{{ url_for('ban') }}">
+    <p>Plate: <input name="plate" value="{{ plate }}" required></p>
+    <p>Reason: <input name="reason" required></p>
+    <p>Student name: <input name="student_name"></p>
+    <p>Student ID: <input name="student_id" type="number"></p>
+    <button type="submit">Confirm ban</button>
+  </form>
+{% endblock %}

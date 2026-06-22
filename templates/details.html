@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>{{ plate }}</h1>
+  <table>
+    {% for key, value in record.items() %}
+      <tr><th>{{ key }}</th><td>{{ value }}</td></tr>
+    {% endfor %}
+  </table>
+
+  {% if record.is_banned %}
+    <form method="post" action="{{ url_for('unban') }}">
+      <input type="hidden" name="plate" value="{{ plate }}">
+      <button type="submit">Unban</button>
+    </form>
+  {% endif %}
+
+  <h2>History for this plate</h2>
+  <table>
+    <tr><th>Action</th><th>Reason</th><th>When</th></tr>
+    {% for e in history %}
+      <tr><td>{{ e.action }}</td><td>{{ e.reason or '' }}</td><td>{{ e.timestamp }}</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

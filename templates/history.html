@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Recent database changes</h1>
+  <table>
+    <tr><th>Plate</th><th>Action</th><th>Reason</th><th>When</th></tr>
+    {% for e in events %}
+      <tr>
+        <td><a href="{{ url_for('details', plate=e.plate) }}">{{ e.plate }}</a></td>
+        <td>{{ e.action }}</td>
+        <td>{{ e.reason or '' }}</td>
+        <td>{{ e.timestamp }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
