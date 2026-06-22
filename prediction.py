@@ -31,7 +31,7 @@ def PredictPlate(ImagePath):
     Crops = SegmentV2(str(ImagePath), HasBand=False)    # real photos: no GB band to cut
     if not Crops:
         print("No characters found. Is the image cropped to just the plate (no GB band)?")
-        return ""
+        return "", []
 
     UseFormat = len(Crops) == 7   # the LL DD LLL rule only applies to standard 7-char plates
     RawChars, FinalChars, Confs = [], [], []
@@ -65,7 +65,7 @@ def PredictPlate(ImagePath):
     print("Per-character confidence:")
     for c, p in zip(FinalChars, Confs):
         print(f"  {c}  {p:.2f}")
-    return FinalPlates
+    return FinalPlates, list(zip(FinalChars, Confs))
 
 
 if __name__ == "__main__":
