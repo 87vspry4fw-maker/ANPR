@@ -8,7 +8,7 @@
   </table>
 
   {% if record.is_banned %}
-    <form method="post" action="{{ url_for('unban') }}">
+    <form method="post" action="{{ url_for('unban', plate=plate) }}">
       <input type="hidden" name="plate" value="{{ plate }}">
       <button type="submit">Unban</button>
     </form>

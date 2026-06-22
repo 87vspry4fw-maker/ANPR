@@ -5,7 +5,7 @@
   {% if banned %}
     <p class="banned">This vehicle is BANNED.</p>
     <a href="{{ url_for('details', plate=plate) }}">View details</a>
-    <form method="post" action="{{ url_for('unban') }}" style="display:inline">
+    <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
       <input type="hidden" name="plate" value="{{ plate }}">
       <button type="submit">Unban</button>
     </form>
