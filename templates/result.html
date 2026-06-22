@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Detected plate: {{ plate }}</h1>
-  <body>If this plate is incorrect, please try again with a retake.</body>
+  <p class="hint">If this plate is incorrect, please try again with a retake.</p>
 
   {% if is_banned %}
-    <p class="banned">This vehicle is BANNED.</p>
-    <a class="btn" href="{{ url_for('details', plate=plate) }}">View details</a>
-    <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
-      <input type="hidden" name="plate" value="{{ plate }}">
-      <button class="btn-danger" type="submit">Unban</button>
-    </form>
+    <div class="badge banned">This vehicle is BANNED.</div>
+    <div class="actions">
+      <a class="btn" href="{{ url_for('details', plate=plate) }}">View details</a>
+
+      <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
+        <input type="hidden" name="plate" value="{{ plate }}">
+        <button class="btn-danger" type="submit">Unban</button>
+      </form>
+    </div>
   {% else %}
-    <p class="ok">This vehicle is not banned.</p>
+  <div class="badge ok">This vehicle is not banned.</div>
+  <div class="actions">
     <a class="btn" href="{{ url_for('ban', plate=plate) }}">Ban this vehicle</a>
-  {% endif %}
+  </div>
+{% endif %}
 {% endblock %}

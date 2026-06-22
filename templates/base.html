@@ -5,8 +5,9 @@
     <a href="{{ url_for('index') }}">Upload</a>
     <a href="{{ url_for('history') }}">History</a>
 </nav>
-<hr>
 {% with messages = get_flashed_messages() %}
   {% for m in messages %}<p class="flash">{{ m }}</p>{% endfor %}
 {% endwith %}
-{% block content %}{% endblock %}
+<div class="card">
+  {% block content %}{% endblock %}
+</div>
