@@ -43,12 +43,21 @@ def predict():
     save_path = UploadDir / secure_filename(file.filename)
     file.save(save_path)
 
-    plate = PredictPlate(save_path)
+    plate, confidences = PredictPlate(save_path)
 
     if not plate:
         flash("No characters could be read. Crop the photo to just the plate and try again.")
         return redirect(url_for("index"))
     
+    Threshold = 0.5
+    low = [
+        f"position {i+1} ('{char}', {conf:.0%})"
+        for i, (char, conf) in enumerate(confidences)
+        if conf < Threshold
+    ]
+    if low:
+        flash("Low confidence on " + ", ".join(low) + " - the reading may be wrong, consider retaking the photo.")
+
     return redirect(url_for("result", plate=plate))
 
 @app.route("/result")
