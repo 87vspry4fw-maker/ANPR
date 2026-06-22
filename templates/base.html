@@ -4,6 +4,9 @@
 <nav>
     <a href="{{ url_for('index') }}">Upload</a>
     <a href="{{ url_for('history') }}">History</a>
+    {% if session.logged_in %}
+      <a href="{{ url_for('logout') }}" style="margin-left:auto">Logout</a>
+    {% endif %}
 </nav>
 {% with messages = get_flashed_messages() %}
   {% for m in messages %}<p class="flash">{{ m }}</p>{% endfor %}

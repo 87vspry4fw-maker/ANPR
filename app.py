@@ -5,9 +5,13 @@ from flask import ( Flask,
                     request,
                     redirect,
                     url_for,
+                    session,
                     flash,)
 
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
+from functools import wraps
+
 
 from prediction import PredictPlate
 from database import CarParkDB
@@ -19,16 +23,48 @@ AllowedExtensions = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
 
 app = Flask(__name__)
 app.secret_key = "change-me-for-the-nea"
+Username = "admin"
+Password_hash = "pbkdf2:sha256:1000000$mozSeLmAFHPr9Dp3$2f356340a657a8f0b911428b9953af055efee2038671f4590961c13d5b8a78fd"
+#Parking@Godalming = password
+
 db = CarParkDB(str(BaseDir / "ANPR.db"))
+
+def login_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("logged_in"):
+            return redirect(url_for("login"))
+        return view(*args, **kwargs)
+    return wrapped
 
 def _normalise(plate):
     return plate.replace(" ", "").upper()
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "")
+        password = request.form.get("password", "")
+        if username == Username and check_password_hash(Password_hash, password):
+            session["logged_in"] = True
+            return redirect(url_for("index"))
+        flash("Incorrect username or password.")
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out.")
+    return redirect(url_for("login"))
+
+
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
+@login_required
 def predict():
     file = request.files.get("image")
     if not file or file.filename == "":
@@ -61,6 +97,7 @@ def predict():
     return redirect(url_for("result", plate=plate))
 
 @app.route("/result")
+@login_required
 def result():
     plate = _normalise(request.args.get("plate", ""))
     if not plate:
@@ -68,6 +105,7 @@ def result():
     return render_template("result.html", plate=plate, is_banned=db.is_banned(plate))
 
 @app.route("/details/<plate>")
+@login_required
 def details(plate):
     plate = _normalise(plate)
     record = db.get_details(plate)
@@ -77,6 +115,7 @@ def details(plate):
     return render_template("details.html", plate=plate, record=record, history=db.get_history(plate))
 
 @app.route("/ban/<plate>", methods=["GET", "POST"])
+@login_required
 def ban(plate):
     if request.method == "GET":
         plate = _normalise(plate)
@@ -95,6 +134,7 @@ def ban(plate):
     return redirect(url_for("details", plate=plate))
 
 @app.route("/unban/<plate>", methods=["POST"])
+@login_required
 def unban(plate):
     plate = _normalise(plate)
     db.unban(plate)
@@ -102,6 +142,7 @@ def unban(plate):
     return redirect(url_for("details", plate=plate))
 
 @app.route("/history")
+@login_required
 def history():
     return render_template("history.html", events=db.recent_events(limit=50))
 
