@@ -2,10 +2,17 @@
 {% block content %}
   <h1>Ban a vehicle</h1>
   <form method="post" action="{{ url_for('ban', plate=plate) }}">
-    <p>Plate: <input name="plate" value="{{ plate }}" required></p>
+    <p>Plate: <span class="plate">{{ plate }}</span></p>
+
+    {% if known %}
+      <p>Student: {{ record.student_name }} (ID: {{ record.student_id }})
+         <br><small class="hint">This vehicle has previously been banned, only a reason is required.</small></p>
+    {% else %}
+      <p>Student name: <input name="student_name" required></p>
+      <p>Student ID: <input name="student_id" type="number" required></p>
+    {% endif %}
+
     <p>Reason: <input name="reason" required></p>
-    <p>Student name: <input name="student_name"></p>
-    <p>Student ID: <input name="student_id" type="number"></p>
     <button type="submit">Confirm ban</button>
   </form>
 {% endblock %}

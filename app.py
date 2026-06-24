@@ -117,19 +117,29 @@ def details(plate):
 @app.route("/ban/<plate>", methods=["GET", "POST"])
 @login_required
 def ban(plate):
-    if request.method == "GET":
-        plate = _normalise(plate)
-        return render_template("ban.html", plate=plate)
-    
     plate = _normalise(plate)
+    record = db.get_details(plate)
+    # "known" = we already have this student's name and ID from a previous ban
+    known = bool(record and record["student_name"] and record["student_id"])
+
+    if request.method == "GET":
+        return render_template("ban.html", plate=plate, record=record, known=known)
+
     reason = request.form.get("reason", "").strip()
-    student_name = request.form.get("student_name", "").strip()
-    student_id = request.form.get("student_id", "").strip()
-    if not reason or not student_name or not student_id:
-        flash("All fields are required to ban a vehicle.")
-        return redirect(url_for("ban", plate=plate))
-    
-    db.ban(plate, reason, student_name, student_id)
+
+    if known:
+        if not reason:
+            flash("A reason is required to ban a vehicle.")
+            return redirect(url_for("ban", plate=plate))
+        db.ban(plate, reason)            # ON CONFLICT keeps the existing name/ID
+    else:
+        student_name = request.form.get("student_name", "").strip()
+        student_id = request.form.get("student_id", "").strip()
+        if not reason or not student_name or not student_id:
+            flash("All fields are required to ban a vehicle.")
+            return redirect(url_for("ban", plate=plate))
+        db.ban(plate, reason, student_name, student_id)
+
     flash(f"{plate} has been banned.")
     return redirect(url_for("details", plate=plate))
 
