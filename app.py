@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 from flask import ( Flask,
                     render_template,
@@ -46,6 +47,16 @@ def format_plate(plate):
     if len(plate) == 7:            # standard UK plate: AB12 CDE
         return plate[:4] + " " + plate[4:]
     return plate                   # leave odd-length reads untouched
+
+@app.template_filter("format_time")
+def format_time(value):
+    if not value:
+        return ""
+    try:
+        dt = datetime.fromisoformat(value)
+    except (ValueError, TypeError):
+        return value                      # if it's not a date, leave it alone
+    return dt.strftime("%d/%m/%Y, %H:%M")  # e.g. 22 Jun 2026, 17:30
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

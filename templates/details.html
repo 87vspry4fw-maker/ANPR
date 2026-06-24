@@ -3,7 +3,7 @@
   <h1><span class="plate">{{ plate | format_plate }}</span></h1>
   <table>
     {% for key, value in record.items() %}
-      <tr><th>{{ key }}</th><td>{{ value }}</td></tr>
+      <tr><th>{{ key }}</th><td>{{ (value | format_time) if key == 'updated_at' else value }}</td></tr>
     {% endfor %}
   </table>
 
@@ -18,7 +18,7 @@
   <table>
     <tr><th>Action</th><th>Reason</th><th>When</th></tr>
     {% for e in history %}
-      <tr><td>{{ e.action }}</td><td>{{ e.reason or '' }}</td><td>{{ e.timestamp }}</td></tr>
+      <tr><td>{{ e.action }}</td><td>{{ e.reason or '' }}</td><td>{{ e.timestamp | format_time }}</td></tr>
     {% endfor %}
   </table>
 {% endblock %}

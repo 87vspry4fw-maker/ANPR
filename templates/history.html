@@ -8,7 +8,7 @@
         <td><a href="{{ url_for('details', plate=e.plate) }}">{{ e.plate | format_plate }}</a></td>
         <td>{{ e.action }}</td>
         <td>{{ e.reason or '' }}</td>
-        <td>{{ e.timestamp }}</td>
+        <td>{{ e.timestamp | format_time }}</td>
       </tr>
     {% endfor %}
   </table>
