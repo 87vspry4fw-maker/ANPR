@@ -89,7 +89,8 @@ form p { margin: .25rem 0; }
 /* The number-plate box */
 .plate {
   font-family: "Charles Wright", monospace;   /* monospace = fallback if the font fails to load */
-  letter-spacing: 3px;
+  letter-spacing: 1px;
+  word-spacing: 6px;
 }
 
 /* Status banner (banned / not banned) */

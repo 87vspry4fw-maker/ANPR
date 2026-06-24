@@ -40,6 +40,13 @@ def login_required(view):
 def _normalise(plate):
     return plate.replace(" ", "").upper()
 
+@app.template_filter("format_plate")
+def format_plate(plate):
+    plate = plate or ""
+    if len(plate) == 7:            # standard UK plate: AB12 CDE
+        return plate[:4] + " " + plate[4:]
+    return plate                   # leave odd-length reads untouched
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>{{ plate }}</h1>
+  <h1><span class="plate">{{ plate | format_plate }}</span></h1>
   <table>
     {% for key, value in record.items() %}
       <tr><th>{{ key }}</th><td>{{ value }}</td></tr>
