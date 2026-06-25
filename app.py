@@ -1,5 +1,5 @@
 from pathlib import Path
-from os import os
+import os
 from datetime import datetime, timedelta
 
 from flask import ( Flask,
@@ -117,7 +117,7 @@ def predict():
         return redirect(url_for("index"))
 
     if not plate:
-        flash("No characters could be read. Crop the photo to just the plate and try again.")
+        flash("No characters could be read. Make sure it's just an image of a plate and try again.")
         return redirect(url_for("index"))
     
     Threshold = 0.5
@@ -129,7 +129,7 @@ def predict():
     if low:
         flash("Low confidence on " + ", ".join(low) + " - the reading may be wrong, consider retaking the photo.")
 
-    os.remove(file)
+    os.remove(save_path)
 
     return redirect(url_for("result", plate=plate))
 

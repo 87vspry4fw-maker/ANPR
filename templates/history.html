@@ -6,7 +6,7 @@
     {% for e in events %}
       <tr>
         <td><a href="{{ url_for('details', plate=e.plate) }}">{{ e.plate | format_plate }}</a></td>
-        <td>{{ e.action }}</td>
+        <td>{{ e.action | capitalize }}</td>
         <td>{{ e.reason or '' }}</td>
         <td>{{ e.timestamp | format_time }}</td>
       </tr>
