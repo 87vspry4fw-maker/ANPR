@@ -156,7 +156,7 @@ def details(plate):
 def ban(plate):
     plate = _normalise(plate)
     record = db.get_details(plate)
-    # "known" = we already have this student's name and ID from a previous ban
+    # "known" = system already has this student's name and ID from a previous ban
     known = bool(record and record["student_name"] and record["student_id"])
 
     if request.method == "GET":
