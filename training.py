@@ -81,8 +81,8 @@ Wrong = [(IdxToClass[c], PerClassCorrect[c], PerClassTotal[c])
          for c in sorted(PerClassTotal) if PerClassCorrect[c] < PerClassTotal[c]]
 if Wrong:
     print("Characters it got wrong:")
-    for Char, Correct, Total in Wrong:
-        print(f"  {Char}: {Correct}/{Total}")
+    for Char, CharCorrect, CharTotal in Wrong:
+        print(f"  {Char}: {CharCorrect}/{CharTotal}")
 else:
     print("All characters were classified correctly!")
 
