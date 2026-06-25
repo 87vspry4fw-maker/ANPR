@@ -1,5 +1,6 @@
 from pathlib import Path
-from datetime import datetime
+from os import os
+from datetime import datetime, timedelta
 
 from flask import ( Flask,
                     render_template,
@@ -22,6 +23,8 @@ UploadDir = BaseDir / "uploads"
 UploadDir.mkdir(exist_ok=True)
 AllowedExtensions = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
 
+IdleLimit = timedelta(minutes=10)
+
 app = Flask(__name__)
 app.secret_key = "change-me-for-the-nea"
 Username = "admin"
@@ -41,6 +44,16 @@ def login_required(view):
 def _normalise(plate):
     return plate.replace(" ", "").upper()
 
+@app.before_request
+def enforce_idle_timeout():
+    if session.get("logged_in"):
+        last = session.get("last_active")
+        if last and datetime.now() - datetime.fromisoformat(last) > IdleLimit:
+            session.clear()
+            flash("You were logged out due to inactivity.")
+            return redirect(url_for("login"))
+        session["last_active"] = datetime.now().isoformat()
+
 @app.template_filter("format_plate")
 def format_plate(plate):
     plate = plate or ""
@@ -56,7 +69,7 @@ def format_time(value):
         dt = datetime.fromisoformat(value)
     except (ValueError, TypeError):
         return value                      # if it's not a date, leave it alone
-    return dt.strftime("%d/%m/%Y, %H:%M")  # e.g. 22 Jun 2026, 17:30
+    return dt.strftime("%d/%m/%Y, %H:%M")  # e.g. 22/06/2026, 17:30
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -97,7 +110,11 @@ def predict():
     save_path = UploadDir / secure_filename(file.filename)
     file.save(save_path)
 
-    plate, confidences = PredictPlate(save_path)
+    try:
+        plate, confidences = PredictPlate(save_path)
+    except Exception:
+        flash("That image couldn't be processed. Please upload a clear photo of a number plate.")
+        return redirect(url_for("index"))
 
     if not plate:
         flash("No characters could be read. Crop the photo to just the plate and try again.")
@@ -111,6 +128,8 @@ def predict():
     ]
     if low:
         flash("Low confidence on " + ", ".join(low) + " - the reading may be wrong, consider retaking the photo.")
+
+    os.remove(file)
 
     return redirect(url_for("result", plate=plate))
 
@@ -165,6 +184,9 @@ def ban(plate):
 @login_required
 def unban(plate):
     plate = _normalise(plate)
+    if not db.get_details(plate):
+        flash(f"No record found for plate '{plate}'.")
+        return redirect(url_for("index"))
     db.unban(plate)
     flash(f"{plate} has been unbanned.")
     return redirect(url_for("details", plate=plate))

@@ -114,3 +114,5 @@ tr:hover td { background: #fafbff; }
 
 /* Spacing between adjacent buttons/links */
 .actions { display: flex; gap: .6rem; margin-top: .5rem; }
+
+.spaced { margin-top: 1rem; }
