@@ -13,7 +13,7 @@ BlockSize = (TargetH // 3) | 1        # adaptive-threshold block size (odd, ~43)
 AdaptC = 15                            # adaptive-threshold constant; raise to drop more noise
 MorphKernel = (3, 3)                   # close/open cleanup kernel
 MinHFrac = 0.4                        # keep contours taller than 40% of plate height
-MinAR, MaxAR = 0.17, 1.0
+MinAR, MaxAR = 0.16, 1.0
 
 
 def Preprocess(ImagePath, HasBand):
