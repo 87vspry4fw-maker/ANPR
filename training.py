@@ -77,11 +77,11 @@ with torch.no_grad():
             if true == pred:
                 PerClassCorrect[true] += 1
 print(f"\nReal-plate test accuracy overall = {Correct/Total:.3f}  ({Correct}/{Total})")
-Wrong = [(IdxToClass[c], PerClassCorrect[c], PerClassTotal[c])
+Right = [(IdxToClass[c], PerClassCorrect[c], PerClassTotal[c])
          for c in sorted(PerClassTotal) if PerClassCorrect[c] < PerClassTotal[c]]
-if Wrong:
-    print("Characters it got wrong:")
-    for Char, CharCorrect, CharTotal in Wrong:
+if Right:
+    print("Characters it got right:")
+    for Char, CharCorrect, CharTotal in Right:
         print(f"  {Char}: {CharCorrect}/{CharTotal}")
 else:
     print("All characters were classified correctly!")
