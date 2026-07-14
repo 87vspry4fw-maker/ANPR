@@ -122,7 +122,7 @@ def predict():
     
     Threshold = 0.5
     low = [
-        f"position {i+1} ('{char}', {conf:.0%})"
+        f"position {i+1} ({char}, confidence: {conf:.0%})"
         for i, (char, conf) in enumerate(confidences)
         if conf < Threshold
     ]
