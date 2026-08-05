@@ -103,7 +103,7 @@ class CarParkDB:
         return [dict(r) for r in rows]
 
     def recent_events(self, limit=50):
-        # DB-wide history (every plate), most recent first - the history tab
+        #DB-wide history (every plate), most recent first - the history tab
         conn = self._get_connection()
         rows = conn.execute(
             "SELECT plate, action, reason, timestamp FROM ban_events ORDER BY timestamp DESC LIMIT ?",
@@ -114,10 +114,10 @@ class CarParkDB:
 
 if __name__ == "__main__":
     db = CarParkDB()
-    # Example usage
+    #Example usage
     db.ban("AB12 CDE", "Violation of parking rules", "John Doe", 123456)
-    print(db.is_banned("AB12 CDE"))  # Should return True
+    print(db.is_banned("AB12 CDE"))  #Should return True
     print(db.get_details("AB12 CDE"))
     db.unban("AB12 CDE")
-    print(db.is_banned("AB12 CDE"))  # Should return False
+    print(db.is_banned("AB12 CDE"))  #Should return False
     print(db.get_history("AB12 CDE"))
