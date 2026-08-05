@@ -37,7 +37,6 @@ class CarParkDB:
             """)
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS ban_events (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     plate TEXT NOT NULL,
                     action TEXT NOT NULL,   -- 'ban' or 'unban'
                     reason TEXT,
@@ -104,7 +103,7 @@ class CarParkDB:
         return [dict(r) for r in rows]
 
     def recent_events(self, limit=50):
-        # DB-wide history (every plate), most recent first - powers the history tab
+        # DB-wide history (every plate), most recent first - the history tab
         conn = self._get_connection()
         rows = conn.execute(
             "SELECT plate, action, reason, timestamp FROM ban_events ORDER BY timestamp DESC LIMIT ?",
