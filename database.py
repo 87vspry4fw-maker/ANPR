@@ -96,6 +96,7 @@ class CarParkDB:
         return dict(row) if row else None
 
     def get_history(self, plate):
+        #kind of realising now I mislabelled this, would be history for a specific plate
         conn = self._get_connection()
         plate = self._normalise(plate)
         rows = conn.execute("SELECT action, reason, timestamp FROM ban_events WHERE plate = ? ORDER BY timestamp DESC", (plate,)).fetchall()
