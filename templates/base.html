@@ -2,10 +2,11 @@
 <title>ANPR Car Park System</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
-    <span style="font-weight:600">ANPR Car Park System (Will Rename)</span>
+    <span style="font-weight:600">Car Park System (Rename)</span>
     {% if session.logged_in %}
       <a href="{{ url_for('index') }}">Upload</a>
       <a href="{{ url_for('history') }}">History</a>
+      <a href="{{ url_for('vehicles') }}">Vehicles</a>
       <a href="{{ url_for('logout') }}" style="margin-left:auto">Logout</a>
     {% endif %}
 </nav>

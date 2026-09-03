@@ -196,5 +196,11 @@ def unban(plate):
 def history():
     return render_template("history.html", events=db.recent_events(limit=50))
 
+
+@app.route("/vehicles")
+@login_required
+def vehicles():    
+    return render_template("vehicles.html", vehicle=db.get_vehicle_details())
+
 if __name__ == "__main__":
     app.run(debug=True, port=8000)

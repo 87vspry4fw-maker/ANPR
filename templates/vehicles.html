@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Vehicles</h1>
+  <table>
+    <tr><th>Plate</th><th>Student Name</th><th>Student ID</th><th>Banned?</th></tr>
+    {% for v in vehicle %}
+      <tr>
+        <td><a href="{{ url_for('details', plate=v.plate) }}">{{ v.plate | format_plate }}</a></td>
+        <td>{{ v.student_name }}</td>
+        <td>{{ v.student_id }}</td>
+        <td>{{ "Yes" if v.is_banned else "No" }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
