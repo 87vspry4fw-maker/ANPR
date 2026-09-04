@@ -6,7 +6,7 @@
 
     {% if known %}
       <p>Student: {{ record.student_name }} (ID: {{ record.student_id }})
-         <br><small class="hint">This vehicle has previously been banned, only a reason is required.</small></p>
+         <br><small class="hint">This vehicle is in the system, only a reason is required.</small></p>
     {% else %}
       <p>Student name: <input name="student_name" required></p>
       <p>Student ID: <input name="student_id" type="number" required></p>
