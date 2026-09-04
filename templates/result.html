@@ -10,13 +10,16 @@
 
       <form method="post" action="{{ url_for('unban', plate=plate) }}" style="display:inline">
         <input type="hidden" name="plate" value="{{ plate }}">
-        <button class="btn-danger" type="submit">Unban</button>
+        <button class="btn" type="submit">Unban</button>
       </form>
     </div>
   {% else %}
   <div class="badge ok">This vehicle is not banned.</div>
   <div class="actions">
-    <a class="btn" href="{{ url_for('ban', plate=plate) }}">Ban this vehicle</a>
+    <form method="post" action="{{ url_for('ban', plate=plate) }}" style="display:inline">
+      <input type="hidden" name="plate" value="{{ plate }}">
+      <button class="btn-danger" type="submit">Ban this vehicle</button>
+    </form>
   </div>
 {% endif %}
 {% endblock %}
