@@ -4,7 +4,7 @@
   <p class="hint">Remember to log out when leaving.</p>
   <form method="post" action="{{ url_for('login') }}">
     <p>Username: <input name="username" required></p>
-    <p>Password: <input name="password" type="password" required></p>
+    <p>Password: <input name="password" type="password" required id="pswd"></p>
     <button type="submit">Log in</button>
   </form>
 {% endblock %}
