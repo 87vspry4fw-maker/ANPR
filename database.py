@@ -119,13 +119,3 @@ class CarParkDB:
         ).fetchall()
         conn.close()
         return [dict(r) for r in rows]
-
-if __name__ == "__main__":
-    db = CarParkDB()
-    #Example usage
-    db.ban("AB12 CDE", "Violation of parking rules", "John Doe", 123456)
-    print(db.is_banned("AB12 CDE"))  #Should return True
-    print(db.get_details("AB12 CDE"))
-    db.unban("AB12 CDE")
-    print(db.is_banned("AB12 CDE"))  #Should return False
-    print(db.get_history("AB12 CDE"))
