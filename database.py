@@ -98,7 +98,7 @@ class CarParkDB:
     def get_vehicle_details(self):
         #gets all vehicles in the database, ordered by plates
         conn = self._get_connection()
-        rows = conn.execute("SELECT plate, is_banned, student_name, student_id, updated_at FROM vehicles ORDER BY plate DESC").fetchall()
+        rows = conn.execute("SELECT plate, is_banned, student_name, student_id, updated_at FROM vehicles ORDER BY plate").fetchall()
         conn.close()
         return [dict(r) for r in rows]
 

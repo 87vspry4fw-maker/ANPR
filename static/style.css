@@ -11,10 +11,14 @@
   --muted: #6b7280;
   --brand: #2563eb;
   --brand-dark: #1d4ed8;
+  --badge-banned: #fee2e2;
+  --badge-ok: #d1fae5;
+  --table-hover: #f9fafb;
   --ok: #059669;
   --danger: #dc2626;
   --danger-dark: #b91c1c;
   --border: #e5e7eb;
+  --white: #ffffff;
 }
 
 * { box-sizing: border-box; }
@@ -63,7 +67,7 @@ h1 { margin-top: 0; font-size: 1.5rem; }
 button, .btn {
   display: inline-block;
   background: var(--brand);
-  color: #fff;
+  color: var(--white);
   border: none;
   padding: .6rem 1.1rem;
   border-radius: 8px;
@@ -101,8 +105,8 @@ form p { margin: .25rem 0; }
   font-weight: 600;
   margin: .75rem 0 1rem;
 }
-.badge.banned { background: #fef2f2; color: var(--danger); }
-.badge.ok     { background: #ecfdf5; color: var(--ok); }
+.badge.banned { background: var(--badge-banned); color: var(--danger); }
+.badge.ok     { background: var(--badge-ok); color: var(--ok); }
 
 /* Hint text under inputs */
 .hint { color: var(--muted); font-size: .85rem; margin: 0 0 1rem; }
@@ -111,7 +115,7 @@ form p { margin: .25rem 0; }
 table { border-collapse: collapse; width: 100%; margin-top: .5rem; }
 th, td { border-bottom: 1px solid var(--border); padding: .6rem; text-align: left; }
 th { background: var(--bg); font-size: .85rem; text-transform: uppercase; color: var(--muted); }
-tr:hover td { background: #fafbff; }
+tr:hover td { background: var(--table-hover); }
 
 /* Spacing between adjacent buttons/links */
 .actions { display: flex; gap: .6rem; margin-top: .5rem; }
