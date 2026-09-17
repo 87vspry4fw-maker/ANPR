@@ -1,0 +1,4 @@
+# Development-only dependencies (not needed to run the ANPR system itself,
+# only to run the test suite). Install with:
+#   pip install -r requirements-dev.txt
+pytest==8.3.4
