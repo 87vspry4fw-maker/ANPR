@@ -5,7 +5,7 @@ ScriptDir = Path(__file__).resolve().parent
 InputDir = ScriptDir / "RealPlates"
 OutputDir = ScriptDir / "Debugging"
 
-# --- tunable parameters (all scaled to the normalized height) ---
+#Tunable parameters (all scaled to the normalized height)
 TargetH = 128                          # normalize every plate to this height first
 BandFraction = 0.16
 BGKernel = ((TargetH // 2) | 1,) * 2  # background-estimate kernel (~65) for illumination flattening
