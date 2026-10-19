@@ -2,9 +2,45 @@
 {% block content %}
   <h1>Staff login</h1>
   <p class="hint">Remember to log out when leaving</p>
+
   <form method="post" action="{{ url_for('login') }}">
     <p>Username: <input name="username" required></p>
-    <p>Password: <input name="password" type="password" required id="pswd"></p>
+
+    <p>
+      Password:
+      <span class="password-container">
+        <input name="password" type="password" required id="pswd">
+
+        <button type="button" id="togglePassword"
+                aria-label="Show password"
+                aria-pressed="false"
+                onclick="togglePasswordVisibility()">
+          <i class="fa-solid fa-eye" aria-hidden="true"></i>
+        </button>
+      </span>
+    </p>
+
     <button type="submit">Log in</button>
   </form>
+
+  <script>
+    function togglePasswordVisibility() {
+      const password = document.getElementById("pswd");
+      const button = document.getElementById("togglePassword");
+      const icon = button.querySelector("i");
+
+      const showing = password.type === "password";
+
+      password.type = showing ? "text" : "password";
+
+      icon.classList.toggle("fa-eye", !showing);
+      icon.classList.toggle("fa-eye-slash", showing);
+
+      button.setAttribute(
+        "aria-label",
+        showing ? "Hide password" : "Show password"
+      );
+      button.setAttribute("aria-pressed", String(showing));
+    }
+  </script>
 {% endblock %}

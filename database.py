@@ -88,6 +88,17 @@ class CarParkDB:
             """, (plate, now))
         conn.close()
 
+    def add_vehicle(self, plate, student_name, student_id):
+        plate = self._normalise(plate)
+        now = self._now()
+        conn = self._get_connection()
+        with conn:
+            conn.execute("""
+                INSERT INTO vehicles (plate, is_banned, student_name, student_id, updated_at)
+                VALUES (?, 0, ?, ?, ?)
+            """, (plate, student_name, student_id, now))
+        conn.close()
+
     def get_details(self, plate):
         conn = self._get_connection()
         plate = self._normalise(plate)

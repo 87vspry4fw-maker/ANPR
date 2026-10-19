@@ -26,7 +26,7 @@ AllowedExtensions = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
 IdleLimit = timedelta(minutes=10)
 
 app = Flask(__name__)
-app.secret_key = "change-me-for-the-nea"
+app.secret_key = "super-secret-key"
 Username = "admin"
 Password_hash = "pbkdf2:sha256:1000000$mozSeLmAFHPr9Dp3$2f356340a657a8f0b911428b9953af055efee2038671f4590961c13d5b8a78fd"
 #Parking@Godalming = password
@@ -201,6 +201,34 @@ def history():
 @login_required
 def vehicles():    
     return render_template("vehicles.html", vehicle=db.get_vehicle_details())
+
+@app.route("/add_vehicle", methods=["GET", "POST"])
+@login_required
+def add_vehicle():
+
+    if request.method == "GET":
+        return render_template("add_vehicle.html")
+
+    plate = request.form.get("plate", "").strip()
+    student_name = request.form.get("student_name", "").strip()
+    student_id = request.form.get("student_id", "").strip()
+
+    if not plate or not student_name or not student_id:
+        flash("All fields are required to add a vehicle.")
+        return redirect(url_for("vehicles"))
+
+    plate = _normalise(plate)
+    record = db.get_details(plate)
+    known = bool(record and record["student_name"] and record["student_id"])
+
+    if known:
+        flash(f"Vehicle with plate '{plate}' already exists in the system.")
+        return redirect(url_for("vehicles"))
+
+    db.add_vehicle(plate, student_name, student_id)
+    flash(f"Vehicle added: {plate}")
+    return redirect(url_for("vehicles"))
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)

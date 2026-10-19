@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Vehicles</h1>
+
+  <form method="get" action="{{ url_for('add_vehicle') }}" style="display:inline">
+        <button class="actions" type="submit">Add Vehicle</button>
+      </form>
+
   <table>
     <tr><th>Plate</th><th>Student Name</th><th>Student ID</th><th>Banned?</th></tr>
     {% for v in vehicle %}

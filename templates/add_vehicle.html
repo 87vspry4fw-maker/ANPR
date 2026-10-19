@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Add a vehicle</h1>
+  <form method="post" action="{{ url_for('add_vehicle') }}">
+    <p>Plate: <input name="plate" required></p>
+    <p>Student name: <input name="student_name" required></p>
+    <p>Student ID: <input name="student_id" type="number" required></p>
+    <button type="submit">Add Vehicle</button>
+  </form>
+{% endblock %}
