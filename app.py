@@ -215,11 +215,11 @@ def add_vehicle():
 
     if not plate or not student_name or not student_id:
         flash("All fields are required to add a vehicle.")
-        return redirect(url_for("vehicles"))
+        return redirect(url_for("add_vehicle"))
 
     plate = _normalise(plate)
     record = db.get_details(plate)
-    known = bool(record and record["student_name"] and record["student_id"])
+    known = bool(record and record["plate"] and record["student_name"] and record["student_id"])
 
     if known:
         flash(f"Vehicle with plate '{plate}' already exists in the system.")
