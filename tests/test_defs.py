@@ -168,17 +168,17 @@ def test_predict_plate_with_no_characters(tmp_path):
     #Call the PredictPlate function
     from prediction import PredictPlate
 
-    final_plate, char_confidences = PredictPlate(blank_image_path)
+    plate, confidences = PredictPlate(blank_image_path)
 
     #Since there are no characters, expect an empty string and an empty list
-    assert final_plate == ""
-    assert char_confidences == []
+    assert plate == ""
+    assert confidences == []
 
 
-def test_predict_plate_with_seven_characters(tmp_path):
-    im_path = "/Users/vahnee/Library/Mobile Documents/com~apple~CloudDocs/A-Level/Computer Science/NEA/ANPR/UKLicencePlateDataset/yellowplate_normal/AA31TCM.png"
+def test_predict_plate_with_seven_characters():
+    im_path = "/Users/vahnee/Library/Mobile Documents/com~apple~CloudDocs/A-Level/Computer Science/NEA/ANPR/RealPlates/LR33TEE.png"
+    
     plate, confidences = PredictPlate(im_path)
-
     assert len(plate) == 7
     assert confidences is not None
 
@@ -200,8 +200,8 @@ def test_segment_v2_with_no_characters(tmp_path):
     assert crops == []
 
 
-def test_segment_v2_with_seven_characters(tmp_path):
-    im_path = "/Users/vahnee/Library/Mobile Documents/com~apple~CloudDocs/A-Level/Computer Science/NEA/ANPR/UKLicencePlateDataset/yellowplate_normal/AA31TCM.png"
-    crops = SegmentV2(im_path)
+def test_segment_v2_with_seven_characters():
+    im_path = "/Users/vahnee/Library/Mobile Documents/com~apple~CloudDocs/A-Level/Computer Science/NEA/ANPR/RealPlates/LR33TEE.png"
 
+    crops = SegmentV2(im_path)
     assert len(crops) == 7
